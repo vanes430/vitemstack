@@ -1,22 +1,28 @@
 settings:
   # Radius to search for items to merge
   merge-radius: 5.0
-  # Maximum stack size
+  # Maximum stack size per entity (Vanilla is 64, we support more!)
   max-stack-size: 128
   # Delay (in ticks) before attempting to stack newly spawned items.
   # Helps performance during explosions or breaking containers.
   stack-delay-ticks: 5
   
-  # Prevent mobs (zombies, villagers, etc.) from picking up items
+  # Prevent mobs from picking up items?
   prevent-mob-pickup: true
   
-  # List of mob types allowed to pick up items.
+  # Mobs allowed to pickup items (keep VILLAGER for breeding)
   pickup-whitelist:
     - "VILLAGER"
     
-  # Worlds where stacking/features are disabled
+  # Disable features in specific worlds
   disabled-worlds:
-    - "example_world"
+    - "spawn_hub"
+
+# Limits the number of item entities per chunk to prevent lag machines.
+chunk-limit:
+  enabled: true
+  # Maximum number of item entities allowed in a chunk.
+  max-items: 64
 
 visuals:
   glowing:
@@ -25,17 +31,14 @@ visuals:
     threshold: 32
 
 blacklist:
-  # List of materials to IGNORE (never stack).
-  # Useful for rare items like Nether Star, Dragon Egg, etc.
+  # Items to NEVER stack (e.g. rare items)
   materials:
     - "NETHER_STAR"
     - "DRAGON_EGG"
     - "BEACON"
   
-  # List of NBT Tags/Keys to check.
-  # If an item has ANY of these NBT tags, it will NOT be stacked.
-  # Useful for MMOItems, Oraxen, ExecutableItems, etc.
-  # Common keys: "MMOITEMS_ITEM_ID", "PublicBukkitValues", "CustomModelData"
+  # Advanced: Don't stack items with these NBT keys
+  # Compatible with MMOItems ("MMOITEMS_ITEM_ID"), MythicMobs, etc.
   nbt-tags:
     - "MMOITEMS_ITEM_ID"
     - "MYTHIC_TYPE"
@@ -49,7 +52,8 @@ sounds:
     pitch: 1.0
 
 custom-name:
-  # Enable text display above items
+  # Show holograms above items?
   enabled: true
-  # Format: {amount} = item count, {name} = item name
+  # Format: {name} = Item Name, {amount} = Count
+  # Color codes (&) supported.
   format: "{name} &cx{amount}"

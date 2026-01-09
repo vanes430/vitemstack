@@ -20,14 +20,16 @@ public class ItemListener implements Listener {
     private final StackingManager stackingManager;
     private final NameManager nameManager;
     private final SoundManager soundManager;
+    private final ChunkManager chunkManager;
 
-    public ItemListener(FoliaLib foliaLib, ConfigManager config, FilterManager filterManager, StackingManager stackingManager, NameManager nameManager, SoundManager soundManager) {
+    public ItemListener(FoliaLib foliaLib, ConfigManager config, FilterManager filterManager, StackingManager stackingManager, NameManager nameManager, SoundManager soundManager, ChunkManager chunkManager) {
         this.foliaLib = foliaLib;
         this.config = config;
         this.filterManager = filterManager;
         this.stackingManager = stackingManager;
         this.nameManager = nameManager;
         this.soundManager = soundManager;
+        this.chunkManager = chunkManager;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -37,6 +39,11 @@ public class ItemListener implements Listener {
         
         foliaLib.getScheduler().runAtEntityLater(item, (task) -> {
             if (!item.isValid()) return;
+            
+            // Cek limit chunk sebelum stacking
+            chunkManager.checkChunkLimit(item);
+            if (!item.isValid()) return; // Jika item dihapus oleh limit, stop.
+
             nameManager.updateName(item);
             stackingManager.stackItem(item);
         }, config.getStackDelay());

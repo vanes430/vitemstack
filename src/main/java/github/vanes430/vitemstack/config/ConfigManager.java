@@ -83,12 +83,31 @@ public class ConfigManager {
         return get().getInt("visuals.glowing.threshold", 32);
     }
 
-    public double getMergeRadius() {
-        return get().getDouble("settings.merge-radius", 5.0);
-    }
+        public double getMergeRadius() {
 
+            return get().getDouble("settings.merge-radius", 5.0);
 
-    public boolean isMobPickupPrevented() {
+        }
+
+    
+
+        public boolean isChunkLimitEnabled() {
+
+            return get().getBoolean("chunk-limit.enabled", true);
+
+        }
+
+    
+
+        public int getChunkLimitMax() {
+
+            return get().getInt("chunk-limit.max-items", 64);
+
+        }
+
+    
+
+        public boolean isMobPickupPrevented() {
         return get().getBoolean("settings.prevent-mob-pickup", true);
     }
 

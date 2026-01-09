@@ -25,11 +25,12 @@ public class VItemStackPlugin extends JavaPlugin {
         FilterManager filterManager = new FilterManager(configManager);
         NameManager nameManager = new NameManager(configManager);
         SoundManager soundManager = new SoundManager(configManager);
+        ChunkManager chunkManager = new ChunkManager(configManager);
         StackingManager stackingManager = new StackingManager(configManager, filterManager, nameManager, soundManager);
 
         // Register Listeners
         getServer().getPluginManager().registerEvents(
-                new ItemListener(foliaLib, configManager, filterManager, stackingManager, nameManager, soundManager), 
+                new ItemListener(foliaLib, configManager, filterManager, stackingManager, nameManager, soundManager, chunkManager), 
                 this
         );
 

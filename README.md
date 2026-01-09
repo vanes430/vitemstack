@@ -10,17 +10,19 @@
 
 ## ✨ Key Features
 
-*   ⚡ **Folia Native Support**: Fully optimized for region-based threading using `FoliaLib`. No more async errors!
-*   🧱 **Smart Stacking**: Intelligently merges nearby items. Supports custom stack limits (default: **128**).
-*   ⏱️ **Performance Delay**: Configurable delay before stacking starts to prevent lag spikes during massive item drops (e.g., explosions, breaking chests).
-*   ⏳ **Fair Despawn Logic**: Merging items calculates the **average** ticks lived. This prevents "infinite" item stacking exploits while ensuring fairness for players.
-*   ✨ **Visual Indicators**: Large stacks of items (configurable, default >32) will **glow**, making it easy to spot valuable loot piles.
-*   🏷️ **Native Holograms**: Displays clean, lag-free text above items (e.g., `Diamond Sword x1`) using native entity metadata. No ArmorStands involved.
-*   🛡️ **Anti-Theft**: Prevents mobs (Zombies, Foxes, etc.) from stealing your loot.
-*   ✅ **Breeding Friendly**: Includes a configurable **Whitelist** (default: Villagers) so your farms keep working.
-*   🚫 **Smart Blacklist**: Filter items by **Material** or **NBT Tags** (perfect for MMOItems, Oraxen, etc.).
-*   🔊 **Audio Feedback**: Satisfying sound effects for item pickup (throttled to prevent ear-rape). Merge sounds are silenced for a cleaner experience.
-*   🧹 **Optimization Tools**: Built-in command to clear ground items efficiently.
+*   ⚡ **Folia Native Support**: Fully optimized for region-based threading using `FoliaLib`. No more async errors or thread safety issues on Folia/Paper.
+*   🧱 **Smart Stacking**: Intelligently merges nearby items. Supports custom stack limits (default: **128**), allowing you to go beyond the vanilla 64 limit.
+*   🛡️ **Smart Chunk Limiter**: Prevents lag machines by limiting item entities per chunk (default: **64**). 
+*   ⚓**Anti-Loss Protection**: Unlike other cleaners, it only removes "plain" items (no custom name, no enchantments, no lore). Your valuable gear and rare loot are always safe!
+*   ⏱️ **Performance Delay**: Configurable delay before stacking starts (default: 5 ticks). This prevents lag spikes during massive item drops like explosions or breaking double chests.
+*   ⏳ **Fair Despawn Logic**: Merging items calculates the **average** ticks lived. This ensures item timers are fair and prevents "infinite" item stacking exploits where items never despawn.
+*   ✨ **Visual Indicators**: Large stacks of items (configurable threshold) will automatically **glow**, making it easy for players to spot valuable loot piles from a distance.
+*   🏷️ **Native Holograms**: Displays clean, lag-free text display above items (e.g., `Diamond x64`) using native entity metadata. No ArmorStands or extra entities involved.
+*   🛡️ **Anti-Theft**: Configurable prevention for mobs (Zombies, Foxes, etc.) from picking up items on the ground.
+*   ✅ **Breeding Friendly**: Includes a configurable **Whitelist** (default: Villagers) so your automatic farms and breeding mechanics keep working perfectly.
+*   🚫 **Smart Blacklist**: Filter items by **Material** or **NBT Tags**. Perfect for ignoring rare items or custom items from plugins like MMOItems, Oraxen, or MythicMobs.
+*   🔊 **Audio Feedback**: Satisfying sound effects for item pickup (with internal cooldowns to prevent noise spam). Merge sounds are silenced for a smoother experience.
+*   🧹 **Optimization Tools**: Built-in command to clear ground items efficiently across worlds.
 
 ---
 
@@ -29,7 +31,7 @@
 1.  Download the `vitemstack-1.0.0.jar`.
 2.  Drop it into your server's `plugins` folder.
 3.  Restart your server.
-4.  (Optional) Configure `config.yml` to your liking.
+4.  (Optional) Configure `config.yml` to your liking and run `/vitemstack reload`.
 
 ---
 
@@ -39,15 +41,11 @@
 | :--- | :--- | :--- |
 | `/vitemstack` | Shows version & author info. | `None` |
 | `/vitemstack reload` | Reloads `config.yml` instantly. | `vitemstack.admin` |
-| `/vitemstack clear [world]` | Removes all items on the ground. | `vitemstack.admin` |
-
-> **Note:** The `clear` command is thread-safe and safe to use on Folia servers.
+| `/vitemstack clear [world]` | Removes all items on the ground safely. | `vitemstack.admin` |
 
 ---
 
 ## ⚙️ Configuration
-
-The `config.yml` is simple yet powerful. Here is the default configuration:
 
 ```yaml
 settings:
@@ -69,6 +67,12 @@ settings:
   # Disable features in specific worlds
   disabled-worlds:
     - "spawn_hub"
+
+# Limits the number of item entities per chunk to prevent lag machines.
+chunk-limit:
+  enabled: true
+  # Maximum number of item entities allowed in a chunk.
+  max-items: 64
 
 visuals:
   glowing:
@@ -109,6 +113,9 @@ custom-name:
 
 ## ❓ FAQ
 
+**Q: Does the Chunk Limiter delete my Diamond Armor?**
+A: **No.** The Smart Limiter specifically checks for `ItemMeta`. Items that are enchanted, renamed, or have special lore are ignored by the limiter. It only purges "plain" items like Cobblestone, Dirt, or common mob drops when the chunk is overloaded.
+
 **Q: Does this work on 1.21?**
 A: Yes! It works on versions 1.14 up to the latest 1.21+ (including Folia).
 
@@ -122,7 +129,7 @@ A: No. It uses **Immutable Swap Caching** and **Predicate Filtering**, making it
 A: Absolutely. Use the `blacklist.nbt-tags` section to prevent your custom RPG items from stacking and losing their unique data.
 
 **Q: Is it safe against duplication (dupe) exploits?**
-A: Yes. We use the vanilla pickup logic. If a stack is 128, you pick up 64, and 64 stay on the ground. No magic inventory manipulation means no dupes.
+A: Yes. We use the vanilla pickup logic. No magic inventory manipulation means no dupes.
 
 ---
 
