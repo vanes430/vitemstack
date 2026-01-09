@@ -1,0 +1,16 @@
+name: vitemstack
+version: ${project.version}
+main: github.vanes430.vitemstack.VItemStackPlugin
+api-version: 1.13
+folia-supported: true
+author: vanes430
+website: https://github.com/vanes430/vitemstack
+description: Simple item stacker working with Folia
+permissions:
+  vitemstack.admin:
+    description: Allows reloading the config
+    default: op
+commands:
+  vitemstack:
+    description: Main command for vitemstack
+    usage: /vitemstack [reload]

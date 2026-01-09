@@ -1,0 +1,52 @@
+settings:
+  # Radius to search for items to merge
+  merge-radius: 5.0
+  # Maximum stack size
+  max-stack-size: 128
+  
+  # Prevent mobs (zombies, villagers, etc.) from picking up items
+  prevent-mob-pickup: true
+  
+  # List of mob types allowed to pick up items.
+  pickup-whitelist:
+    - "VILLAGER"
+    
+  # Worlds where stacking/features are disabled
+  disabled-worlds:
+    - "example_world"
+
+blacklist:
+  # List of materials to IGNORE (never stack).
+  # Useful for rare items like Nether Star, Dragon Egg, etc.
+  materials:
+    - "NETHER_STAR"
+    - "DRAGON_EGG"
+    - "BEACON"
+  
+  # List of NBT Tags/Keys to check.
+  # If an item has ANY of these NBT tags, it will NOT be stacked.
+  # Useful for MMOItems, Oraxen, ExecutableItems, etc.
+  # Common keys: "MMOITEMS_ITEM_ID", "PublicBukkitValues", "CustomModelData"
+  nbt-tags:
+    - "MMOITEMS_ITEM_ID"
+    - "MYTHIC_TYPE"
+
+sounds:
+  # Sound when items stack/merge
+  merge:
+    enabled: true
+    sound: "ENTITY_ITEM_PICKUP"
+    volume: 0.5
+    pitch: 1.5
+  # Sound when player picks up item
+  pickup:
+    enabled: true
+    sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    volume: 0.3
+    pitch: 1.0
+
+custom-name:
+  # Enable text display above items
+  enabled: true
+  # Format: {amount} = item count, {name} = item name
+  format: "{name} &cx{amount}"
