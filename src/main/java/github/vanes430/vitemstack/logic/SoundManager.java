@@ -17,10 +17,6 @@ public class SoundManager {
         this.config = config;
     }
 
-    public void playMerge(Location location) {
-        playSound(location, null, "sounds.merge");
-    }
-
     public void playPickup(Player player) {
         UUID uuid = player.getUniqueId();
         long now = System.currentTimeMillis();

@@ -3,6 +3,9 @@ settings:
   merge-radius: 5.0
   # Maximum stack size
   max-stack-size: 128
+  # Delay (in ticks) before attempting to stack newly spawned items.
+  # Helps performance during explosions or breaking containers.
+  stack-delay-ticks: 5
   
   # Prevent mobs (zombies, villagers, etc.) from picking up items
   prevent-mob-pickup: true
@@ -14,6 +17,12 @@ settings:
   # Worlds where stacking/features are disabled
   disabled-worlds:
     - "example_world"
+
+visuals:
+  glowing:
+    enabled: true
+    # Items will glow if stack amount is greater than this value
+    threshold: 32
 
 blacklist:
   # List of materials to IGNORE (never stack).
@@ -32,12 +41,6 @@ blacklist:
     - "MYTHIC_TYPE"
 
 sounds:
-  # Sound when items stack/merge
-  merge:
-    enabled: true
-    sound: "ENTITY_ITEM_PICKUP"
-    volume: 0.5
-    pitch: 1.5
   # Sound when player picks up item
   pickup:
     enabled: true

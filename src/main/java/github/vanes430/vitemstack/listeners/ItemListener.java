@@ -1,6 +1,7 @@
 package github.vanes430.vitemstack.listeners;
 
 import com.tcoded.folialib.FoliaLib;
+import github.vanes430.vitemstack.config.ConfigManager;
 import github.vanes430.vitemstack.logic.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -14,13 +15,15 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 public class ItemListener implements Listener {
 
     private final FoliaLib foliaLib;
+    private final ConfigManager config;
     private final FilterManager filterManager;
     private final StackingManager stackingManager;
     private final NameManager nameManager;
     private final SoundManager soundManager;
 
-    public ItemListener(FoliaLib foliaLib, FilterManager filterManager, StackingManager stackingManager, NameManager nameManager, SoundManager soundManager) {
+    public ItemListener(FoliaLib foliaLib, ConfigManager config, FilterManager filterManager, StackingManager stackingManager, NameManager nameManager, SoundManager soundManager) {
         this.foliaLib = foliaLib;
+        this.config = config;
         this.filterManager = filterManager;
         this.stackingManager = stackingManager;
         this.nameManager = nameManager;
@@ -32,11 +35,11 @@ public class ItemListener implements Listener {
         Item item = event.getEntity();
         if (filterManager.isWorldDisabled(item.getWorld().getName())) return;
         
-        foliaLib.getScheduler().runAtEntity(item, (task) -> {
+        foliaLib.getScheduler().runAtEntityLater(item, (task) -> {
             if (!item.isValid()) return;
             nameManager.updateName(item);
             stackingManager.stackItem(item);
-        });
+        }, config.getStackDelay());
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -58,7 +61,7 @@ public class ItemListener implements Listener {
         if (filterManager.isWorldDisabled(event.getEntity().getWorld().getName())) return;
 
         Item target = event.getTarget();
-        soundManager.playMerge(target.getLocation());
+        // Sound removed per user request
 
         foliaLib.getScheduler().runAtEntity(target, (task) -> {
             if (target.isValid()) {

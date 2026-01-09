@@ -29,7 +29,7 @@ public class VItemStackPlugin extends JavaPlugin {
 
         // Register Listeners
         getServer().getPluginManager().registerEvents(
-                new ItemListener(foliaLib, filterManager, stackingManager, nameManager, soundManager), 
+                new ItemListener(foliaLib, configManager, filterManager, stackingManager, nameManager, soundManager), 
                 this
         );
 

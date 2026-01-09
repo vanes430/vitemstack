@@ -12,11 +12,14 @@
 
 *   ⚡ **Folia Native Support**: Fully optimized for region-based threading using `FoliaLib`. No more async errors!
 *   🧱 **Smart Stacking**: Intelligently merges nearby items. Supports custom stack limits (default: **128**).
+*   ⏱️ **Performance Delay**: Configurable delay before stacking starts to prevent lag spikes during massive item drops (e.g., explosions, breaking chests).
+*   ⏳ **Fair Despawn Logic**: Merging items calculates the **average** ticks lived. This prevents "infinite" item stacking exploits while ensuring fairness for players.
+*   ✨ **Visual Indicators**: Large stacks of items (configurable, default >32) will **glow**, making it easy to spot valuable loot piles.
 *   🏷️ **Native Holograms**: Displays clean, lag-free text above items (e.g., `Diamond Sword x1`) using native entity metadata. No ArmorStands involved.
 *   🛡️ **Anti-Theft**: Prevents mobs (Zombies, Foxes, etc.) from stealing your loot.
 *   ✅ **Breeding Friendly**: Includes a configurable **Whitelist** (default: Villagers) so your farms keep working.
 *   🚫 **Smart Blacklist**: Filter items by **Material** or **NBT Tags** (perfect for MMOItems, Oraxen, etc.).
-*   🔊 **Audio Feedback**: Satisfying sound effects for item merging and pickup (with cooldowns to prevent spam).
+*   🔊 **Audio Feedback**: Satisfying sound effects for item pickup (throttled to prevent ear-rape). Merge sounds are silenced for a cleaner experience.
 *   🧹 **Optimization Tools**: Built-in command to clear ground items efficiently.
 
 ---
@@ -50,9 +53,11 @@ The `config.yml` is simple yet powerful. Here is the default configuration:
 settings:
   # Radius (in blocks) to search for items to merge
   merge-radius: 5.0
-  
   # Maximum stack size per entity (Vanilla is 64, we support more!)
   max-stack-size: 128
+  # Delay (in ticks) before attempting to stack newly spawned items.
+  # Helps performance during explosions or breaking containers.
+  stack-delay-ticks: 5
   
   # Prevent mobs from picking up items?
   prevent-mob-pickup: true
@@ -64,6 +69,12 @@ settings:
   # Disable features in specific worlds
   disabled-worlds:
     - "spawn_hub"
+
+visuals:
+  glowing:
+    enabled: true
+    # Items will glow if stack amount is greater than this value
+    threshold: 32
 
 blacklist:
   # Items to NEVER stack (e.g. rare items)
@@ -79,11 +90,7 @@ blacklist:
     - "MYTHIC_TYPE"
 
 sounds:
-  merge:
-    enabled: true
-    sound: "ENTITY_ITEM_PICKUP"
-    volume: 0.5
-    pitch: 1.5
+  # Sound when player picks up item
   pickup:
     enabled: true
     sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
@@ -104,6 +111,9 @@ custom-name:
 
 **Q: Does this work on 1.21?**
 A: Yes! It works on versions 1.14 up to the latest 1.21+ (including Folia).
+
+**Q: Why don't items stack INSTANTLY when I break a chest?**
+A: We added a small delay (default 5 ticks) to improve server performance. This allows the physics engine to settle items before we run the stacking logic, preventing lag spikes.
 
 **Q: Will it lag my server?**
 A: No. It uses **Immutable Swap Caching** and **Predicate Filtering**, making it extremely fast (O(1) lookups). It's designed for high-player-count servers.

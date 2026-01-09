@@ -67,13 +67,26 @@ public class ConfigManager {
         return plugin.getConfig();
     }
 
+    public int getMaxStackSize() {
+        return get().getInt("settings.max-stack-size", 64);
+    }
+
+    public int getStackDelay() {
+        return get().getInt("settings.stack-delay-ticks", 5);
+    }
+
+    public boolean isGlowingEnabled() {
+        return get().getBoolean("visuals.glowing.enabled", false);
+    }
+
+    public int getGlowingThreshold() {
+        return get().getInt("visuals.glowing.threshold", 32);
+    }
+
     public double getMergeRadius() {
         return get().getDouble("settings.merge-radius", 5.0);
     }
 
-    public int getMaxStackSize() {
-        return get().getInt("settings.max-stack-size", 128);
-    }
 
     public boolean isMobPickupPrevented() {
         return get().getBoolean("settings.prevent-mob-pickup", true);

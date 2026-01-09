@@ -45,26 +45,48 @@ public class StackingManager {
                 int totalAmount = itemStack.getAmount() + targetStack.getAmount();
 
                 if (totalAmount <= maxStackSize) {
+                    // Average ticks calculation
+                    int targetTicks = target.getTicksLived();
+                    int itemTicks = item.getTicksLived();
+                    int newTicks = ((targetTicks * targetStack.getAmount()) + (itemTicks * itemStack.getAmount())) / totalAmount;
+                    target.setTicksLived(newTicks);
+
                     targetStack.setAmount(totalAmount);
                     target.setItemStack(targetStack);
                     
+                    if (config.isGlowingEnabled()) {
+                        target.setGlowing(totalAmount > config.getGlowingThreshold());
+                    }
+
                     nameManager.updateName(target);
-                    soundManager.playMerge(target.getLocation());
+                    // Sound removed per user request
                     
                     item.remove();
                     break; 
                 } else {
                     int transfer = maxStackSize - targetStack.getAmount();
                     if (transfer > 0) {
+                        // Average ticks calculation for target
+                        int targetTicks = target.getTicksLived();
+                        int itemTicks = item.getTicksLived();
+                        int newTicks = ((targetTicks * targetStack.getAmount()) + (itemTicks * transfer)) / maxStackSize;
+                        target.setTicksLived(newTicks);
+
                         targetStack.setAmount(maxStackSize);
                         target.setItemStack(targetStack);
+                        if (config.isGlowingEnabled()) {
+                            target.setGlowing(maxStackSize > config.getGlowingThreshold());
+                        }
                         nameManager.updateName(target);
                         
                         itemStack.setAmount(itemStack.getAmount() - transfer);
                         item.setItemStack(itemStack);
+                        if (config.isGlowingEnabled()) {
+                            item.setGlowing(itemStack.getAmount() > config.getGlowingThreshold());
+                        }
                         nameManager.updateName(item);
                         
-                        soundManager.playMerge(target.getLocation());
+                        // Sound removed per user request
                     }
                 }
             }
