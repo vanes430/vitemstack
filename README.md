@@ -124,24 +124,31 @@ custom-name:
 ## ❓ FAQ
 
 **Q: Does the Chunk Limiter delete my Diamond Armor?**
+<br>
 A: **No.** The Smart Limiter specifically checks for `ItemMeta`. Items that are enchanted, renamed, or have special lore are ignored by the limiter. It only purges "plain" items like Cobblestone, Dirt, or common mob drops when the chunk is overloaded.
 
 **Q: Does this work on 1.21?**
+<br>
 A: Yes! It works on versions 1.14 up to the latest 1.21+ (including Folia).
 
 **Q: Why do my stacked items look like just one item?**
+<br>
 A: This is our **Visual Stacking** feature! It reduces client lag by rendering only one item model, but the real amount (e.g., 64) is safely stored and given to you when picked up.
 
 **Q: Why don't items stack INSTANTLY when I break a chest?**
+<br>
 A: We added a small delay (default 5 ticks) to improve server performance. This allows the physics engine to settle items before we run the stacking logic, preventing lag spikes.
 
 **Q: Will it lag my server?**
+<br>
 A: No. It uses **Immutable Swap Caching** and **Predicate Filtering**, making it extremely fast (O(1) lookups). It's designed for high-player-count servers.
 
 **Q: Can I use this with custom item plugins?**
+<br>
 A: Absolutely. Use the `blacklist.nbt-tags` section to prevent your custom RPG items from stacking and losing their unique data.
 
 **Q: Is it safe against duplication (dupe) exploits?**
+<br>
 A: Yes. We use the vanilla pickup logic. No magic inventory manipulation means no dupes.
 
 ---
