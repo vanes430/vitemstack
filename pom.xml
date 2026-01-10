@@ -6,7 +6,7 @@
 
     <groupId>github.vanes430</groupId>
     <artifactId>vitemstack</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>vitemstack</name>
