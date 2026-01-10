@@ -13,4 +13,4 @@ permissions:
 commands:
   vitemstack:
     description: Main command for vitemstack
-    usage: /vitemstack [reload]
+    usage: /vitemstack [reload|clear]
