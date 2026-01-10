@@ -1,10 +1,12 @@
 package github.vanes430.vitemstack.logic;
 
+import github.vanes430.vitemstack.VItemStackPlugin;
 import github.vanes430.vitemstack.config.ConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 public class NameManager {
     private final ConfigManager config;
@@ -17,7 +19,14 @@ public class NameManager {
         if (!config.get().getBoolean("custom-name.enabled", true)) return;
 
         ItemStack stack = item.getItemStack();
-        int amount = stack.getAmount();
+        int amount;
+        
+        if (item.getPersistentDataContainer().has(VItemStackPlugin.REAL_AMOUNT_KEY, PersistentDataType.INTEGER)) {
+            amount = item.getPersistentDataContainer().get(VItemStackPlugin.REAL_AMOUNT_KEY, PersistentDataType.INTEGER);
+        } else {
+            amount = stack.getAmount();
+        }
+
         String displayName = getNiceName(stack);
 
         String format = config.get().getString("custom-name.format", "{name} &cx{amount}");

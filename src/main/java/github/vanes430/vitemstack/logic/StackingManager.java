@@ -1,9 +1,12 @@
 package github.vanes430.vitemstack.logic;
 
+import com.tcoded.folialib.FoliaLib;
+import github.vanes430.vitemstack.VItemStackPlugin;
 import github.vanes430.vitemstack.config.ConfigManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Collection;
 
@@ -12,19 +15,25 @@ public class StackingManager {
     private final FilterManager filterManager;
     private final NameManager nameManager;
     private final SoundManager soundManager;
+    private final FoliaLib foliaLib;
 
-    public StackingManager(ConfigManager config, FilterManager filterManager, NameManager nameManager, SoundManager soundManager) {
+    public StackingManager(ConfigManager config, FilterManager filterManager, NameManager nameManager, SoundManager soundManager, FoliaLib foliaLib) {
         this.config = config;
         this.filterManager = filterManager;
         this.nameManager = nameManager;
         this.soundManager = soundManager;
+        this.foliaLib = foliaLib;
     }
 
     public void stackItem(Item item) {
         if (filterManager.isBlacklisted(item.getItemStack())) return;
+        
+        // Ensure the item has the correct real amount set initially if not present
+        if (!item.getPersistentDataContainer().has(VItemStackPlugin.REAL_AMOUNT_KEY, PersistentDataType.INTEGER)) {
+            setRealAmount(item, item.getItemStack().getAmount());
+        }
 
         double range = config.getMergeRadius();
-        int maxStackSize = config.getMaxStackSize();
 
         // Optimized: Only get Item entities within range to avoid iterating over mobs/players
         Collection<Entity> nearbyEntities = item.getWorld().getNearbyEntities(
@@ -36,60 +45,95 @@ public class StackingManager {
             Item target = (Item) entity;
 
             if (target.getUniqueId().equals(item.getUniqueId())) continue;
-            if (filterManager.isBlacklisted(target.getItemStack())) continue;
 
-            ItemStack itemStack = item.getItemStack();
-            ItemStack targetStack = target.getItemStack();
+            // Schedule safe access to target
+            foliaLib.getScheduler().runAtEntity(target, (task) -> {
+                // Verify validity of both entities inside the task
+                if (!target.isValid() || !item.isValid()) return;
+                
+                // Re-check distance/world just in case
+                if (!target.getWorld().equals(item.getWorld())) return;
+                if (target.getLocation().distanceSquared(item.getLocation()) > (range * range)) return;
 
-            if (itemStack.isSimilar(targetStack)) {
-                int totalAmount = itemStack.getAmount() + targetStack.getAmount();
+                if (filterManager.isBlacklisted(target.getItemStack())) return;
 
-                if (totalAmount <= maxStackSize) {
-                    // Average ticks calculation
-                    int targetTicks = target.getTicksLived();
-                    int itemTicks = item.getTicksLived();
-                    int newTicks = ((targetTicks * targetStack.getAmount()) + (itemTicks * itemStack.getAmount())) / totalAmount;
-                    target.setTicksLived(newTicks);
+                ItemStack itemStack = item.getItemStack();
+                ItemStack targetStack = target.getItemStack();
 
-                    targetStack.setAmount(totalAmount);
-                    target.setItemStack(targetStack);
-                    
-                    if (config.isGlowingEnabled()) {
-                        target.setGlowing(totalAmount > config.getGlowingThreshold());
-                    }
+                if (itemStack.isSimilar(targetStack)) {
+                    int maxStackSize = config.getMaxStackSize();
+                    int amount1 = getRealAmount(item);
+                    int amount2 = getRealAmount(target);
+                    int totalAmount = amount1 + amount2;
 
-                    nameManager.updateName(target);
-                    // Sound removed per user request
-                    
-                    item.remove();
-                    break; 
-                } else {
-                    int transfer = maxStackSize - targetStack.getAmount();
-                    if (transfer > 0) {
-                        // Average ticks calculation for target
+                    if (totalAmount <= maxStackSize) {
+                        // Full merge into target
                         int targetTicks = target.getTicksLived();
                         int itemTicks = item.getTicksLived();
-                        int newTicks = ((targetTicks * targetStack.getAmount()) + (itemTicks * transfer)) / maxStackSize;
+                        int newTicks = ((targetTicks * amount2) + (itemTicks * amount1)) / totalAmount;
                         target.setTicksLived(newTicks);
 
-                        targetStack.setAmount(maxStackSize);
-                        target.setItemStack(targetStack);
+                        setRealAmount(target, totalAmount);
+                        
                         if (config.isGlowingEnabled()) {
-                            target.setGlowing(maxStackSize > config.getGlowingThreshold());
+                            target.setGlowing(totalAmount > config.getGlowingThreshold());
                         }
+
                         nameManager.updateName(target);
-                        
-                        itemStack.setAmount(itemStack.getAmount() - transfer);
-                        item.setItemStack(itemStack);
-                        if (config.isGlowingEnabled()) {
-                            item.setGlowing(itemStack.getAmount() > config.getGlowingThreshold());
-                        }
-                        nameManager.updateName(item);
-                        
                         // Sound removed per user request
+                        
+                        // Remove item on its own thread
+                        foliaLib.getScheduler().runAtEntity(item, (t) -> item.remove());
+                    } else {
+                        // Partial merge
+                        int transfer = maxStackSize - amount2;
+                        if (transfer > 0) {
+                            int targetTicks = target.getTicksLived();
+                            int itemTicks = item.getTicksLived();
+                            int newTicks = ((targetTicks * amount2) + (itemTicks * transfer)) / maxStackSize;
+                            target.setTicksLived(newTicks);
+
+                            setRealAmount(target, maxStackSize);
+                            if (config.isGlowingEnabled()) {
+                                target.setGlowing(maxStackSize > config.getGlowingThreshold());
+                            }
+                            nameManager.updateName(target);
+                            
+                            // Update item on its own thread
+                            foliaLib.getScheduler().runAtEntity(item, (t) -> {
+                                if (!item.isValid()) return;
+                                int currentReal = getRealAmount(item); 
+                                // Recalculate based on current state (though strictly we used snapshots)
+                                // Better to just subtract transfer
+                                int newAmount = currentReal - transfer;
+                                if (newAmount <= 0) {
+                                    item.remove();
+                                } else {
+                                    setRealAmount(item, newAmount);
+                                    if (config.isGlowingEnabled()) {
+                                        item.setGlowing(newAmount > config.getGlowingThreshold());
+                                    }
+                                    nameManager.updateName(item);
+                                }
+                            });
+                        }
                     }
                 }
-            }
+            });
         }
+    }
+
+    public int getRealAmount(Item item) {
+        if (item.getPersistentDataContainer().has(VItemStackPlugin.REAL_AMOUNT_KEY, PersistentDataType.INTEGER)) {
+            return item.getPersistentDataContainer().get(VItemStackPlugin.REAL_AMOUNT_KEY, PersistentDataType.INTEGER);
+        }
+        return item.getItemStack().getAmount();
+    }
+
+    public void setRealAmount(Item item, int amount) {
+        item.getPersistentDataContainer().set(VItemStackPlugin.REAL_AMOUNT_KEY, PersistentDataType.INTEGER, amount);
+        ItemStack stack = item.getItemStack();
+        stack.setAmount(1);
+        item.setItemStack(stack);
     }
 }

@@ -11,6 +11,8 @@
 ## ✨ Key Features
 
 *   ⚡ **Folia Native Support**: Fully optimized for region-based threading using `FoliaLib`. No more async errors or thread safety issues on Folia/Paper.
+*   📦 **Visual Stacking**: Items visually appear as a **single entity** (`Amount: 1`) but contain the true stack amount (e.g., x64) internally. This drastically reduces client-side FPS lag and server-side physics calculations while keeping the "cool" aesthetic of single items.
+*   💾 **Thread-Safe & Leak-Free**: Uses `PersistentDataContainer` (PDC) for data storage, ensuring zero memory leaks. Full Folia support with region-safe scheduling (`FoliaLib`) guarantees no thread race conditions.
 *   🧱 **Smart Stacking**: Intelligently merges nearby items. Supports custom stack limits (default: **128**), allowing you to go beyond the vanilla 64 limit.
 *   🛡️ **Smart Chunk Limiter**: Prevents lag machines by limiting item entities per chunk (default: **64**). 
 *   ⚓**Anti-Loss Protection**: Unlike other cleaners, it only removes "plain" items (no custom name, no enchantments, no lore). Your valuable gear and rare loot are always safe!
@@ -118,6 +120,9 @@ A: **No.** The Smart Limiter specifically checks for `ItemMeta`. Items that are 
 
 **Q: Does this work on 1.21?**
 A: Yes! It works on versions 1.14 up to the latest 1.21+ (including Folia).
+
+**Q: Why do my stacked items look like just one item?**
+A: This is our **Visual Stacking** feature! It reduces client lag by rendering only one item model, but the real amount (e.g., 64) is safely stored and given to you when picked up.
 
 **Q: Why don't items stack INSTANTLY when I break a chest?**
 A: We added a small delay (default 5 ticks) to improve server performance. This allows the physics engine to settle items before we run the stacking logic, preventing lag spikes.

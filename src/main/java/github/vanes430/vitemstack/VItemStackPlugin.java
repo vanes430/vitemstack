@@ -12,10 +12,13 @@ public class VItemStackPlugin extends JavaPlugin {
     private FoliaLib foliaLib;
     private static VItemStackPlugin instance;
     private ConfigManager configManager;
+    
+    public static org.bukkit.NamespacedKey REAL_AMOUNT_KEY;
 
     @Override
     public void onEnable() {
         instance = this;
+        REAL_AMOUNT_KEY = new org.bukkit.NamespacedKey(this, "real_amount");
         this.foliaLib = new FoliaLib(this);
 
         saveDefaultConfig();
@@ -26,7 +29,7 @@ public class VItemStackPlugin extends JavaPlugin {
         NameManager nameManager = new NameManager(configManager);
         SoundManager soundManager = new SoundManager(configManager);
         ChunkManager chunkManager = new ChunkManager(configManager);
-        StackingManager stackingManager = new StackingManager(configManager, filterManager, nameManager, soundManager);
+        StackingManager stackingManager = new StackingManager(configManager, filterManager, nameManager, soundManager, foliaLib);
 
         // Register Listeners
         getServer().getPluginManager().registerEvents(
