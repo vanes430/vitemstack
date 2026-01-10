@@ -30,7 +30,11 @@ public class StackingManager {
         
         // Ensure the item has the correct real amount set initially if not present
         if (!item.getPersistentDataContainer().has(VItemStackPlugin.REAL_AMOUNT_KEY, PersistentDataType.INTEGER)) {
-            setRealAmount(item, item.getItemStack().getAmount());
+            int amount = item.getItemStack().getAmount();
+            setRealAmount(item, amount);
+            if (config.isGlowingEnabled()) {
+                item.setGlowing(amount > config.getGlowingThreshold());
+            }
         }
 
         double range = config.getMergeRadius();
