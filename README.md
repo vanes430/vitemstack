@@ -1,10 +1,18 @@
+<div align="center">
+
 # vitemstack 📦
 
-![Java](https://img.shields.io/badge/Java-21+-ED8B00?style=for-the-badge&logo=java&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Spigot%20%7C%20Paper%20%7C%20Folia-blue?style=for-the-badge&logo=spigotmc)
-![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=for-the-badge)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/vanes430/vitemstack/build.yml?branch=master&style=flat-square&logo=github-actions)](https://github.com/vanes430/vitemstack/actions)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/vanes430/vitemstack?style=flat-square&logo=github)](https://github.com/vanes430/vitemstack/releases)
+[![License](https://img.shields.io/github/license/vanes430/vitemstack?style=flat-square)](LICENSE)
+<br>
+[![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://adoptium.net/)
+[![Platform](https://img.shields.io/badge/Platform-Spigot_|_Paper_|_Folia-373737?style=flat-square&logo=spigotmc&logoColor=white)](https://papermc.io/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.14_--_1.21%2B-46D168?style=flat-square&logo=minecraft&logoColor=white)](https://minecraft.net/)
 
 **vitemstack** is a lightweight, high-performance, and Folia-ready item stacking solution designed for modern Minecraft servers. Built on the robust Spigot API 1.14 foundation, it ensures compatibility with advanced NBT features while remaining incredibly efficient.
+
+</div>
 
 ---
 
