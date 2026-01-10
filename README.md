@@ -2,7 +2,7 @@
 
 # vitemstack 📦
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/vanes430/vitemstack/build.yml?branch=master&style=flat-square&logo=github-actions)](https://github.com/vanes430/vitemstack/actions)
+[![Build Status](https://github.com/vanes430/vitemstack/actions/workflows/build.yml/badge.svg?branch=master&style=flat-square)](https://github.com/vanes430/vitemstack/actions/workflows/build.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/vanes430/vitemstack?style=flat-square&logo=github)](https://github.com/vanes430/vitemstack/releases)
 [![License](https://img.shields.io/github/license/vanes430/vitemstack?style=flat-square)](LICENSE)
 <br>
