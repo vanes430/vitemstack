@@ -142,7 +142,7 @@ public class ItemListener implements Listener {
                 int targetTicks = target.getTicksLived();
                 int itemTicks = source.getTicksLived();
                 int newTicks = ((targetTicks * amount1) + (itemTicks * amount2)) / totalAmount;
-                target.setTicksLived(newTicks);
+                target.setTicksLived(Math.max(1, newTicks));
 
                 stackingManager.setRealAmount(target, totalAmount);
                 

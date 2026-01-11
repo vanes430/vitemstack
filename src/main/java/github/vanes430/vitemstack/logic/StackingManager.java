@@ -75,7 +75,7 @@ public class StackingManager {
                         int targetTicks = target.getTicksLived();
                         int itemTicks = item.getTicksLived();
                         int newTicks = ((targetTicks * amount2) + (itemTicks * amount1)) / totalAmount;
-                        target.setTicksLived(newTicks);
+                        target.setTicksLived(Math.max(1, newTicks));
 
                         setRealAmount(target, totalAmount);
                         
@@ -95,7 +95,7 @@ public class StackingManager {
                             int targetTicks = target.getTicksLived();
                             int itemTicks = item.getTicksLived();
                             int newTicks = ((targetTicks * amount2) + (itemTicks * transfer)) / maxStackSize;
-                            target.setTicksLived(newTicks);
+                            target.setTicksLived(Math.max(1, newTicks));
 
                             setRealAmount(target, maxStackSize);
                             if (config.isGlowingEnabled()) {
